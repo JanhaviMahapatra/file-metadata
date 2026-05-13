@@ -6,18 +6,22 @@ const app = express();
 
 app.use(cors());
 
-app.use('/public', express.static(`${process.cwd()}/public`));
+app.use('/public', express.static(process.cwd() + '/public'));
 
 app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
 
-// multer setup
-const upload = multer();
+// multer memory storage
+const storage = multer.memoryStorage();
+
+const upload = multer({
+  storage: storage
+});
 
 
-// file upload route
+// upload route
 app.post(
   '/api/fileanalyse',
   upload.single('upfile'),
@@ -29,9 +33,9 @@ app.post(
       });
     }
 
-    res.json({
+    return res.json({
       name: req.file.originalname,
-      type: req.file.mimetype,
+      type: req.file.mimetype || req.file.type,
       size: req.file.size
     });
 
