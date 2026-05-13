@@ -4,42 +4,32 @@ const multer = require('multer');
 
 const app = express();
 
-const port = process.env.PORT || 3000;
-
 app.use(cors());
 
-const upload = multer().single('upfile');
+const upload = multer();
 
-app.use(express.static(`${__dirname}/public`));
+app.use('/public', express.static(process.cwd() + '/public'));
 
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/views/index.html`);
+app.get('/', function(req, res) {
+  res.sendFile(process.cwd() + '/views/index.html');
 });
 
-app.post('/api/fileanalyse', upload, (req, res) => {
+app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
 
-  if (req.file) {
-
-    const {
-      originalname: name,
-      mimetype: type,
-      size
-    } = req.file;
-
+  if (!req.file) {
     return res.json({
-      name,
-      type,
-      size
+      error: 'No file uploaded'
     });
-
   }
 
-  return res.json({
-    error: 'no file selected'
+  res.json({
+    name: req.file.originalname,
+    type: req.file.mimetype,
+    size: req.file.size
   });
 
 });
 
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+const listener = app.listen(process.env.PORT || 3000, function() {
+  console.log('Your app is listening on port ' + listener.address().port);
 });
