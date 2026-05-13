@@ -6,16 +6,14 @@ const app = express();
 
 app.use(cors());
 
-const storage = multer.memoryStorage();
+app.use(express.static('public'));
 
 const upload = multer({
-  storage: storage
+  storage: multer.memoryStorage()
 });
 
-app.use('/public', express.static(process.cwd() + '/public'));
-
 app.get('/', function(req, res) {
-  res.sendFile(process.cwd() + '/views/index.html');
+  res.sendFile(__dirname + '/views/index.html');
 });
 
 app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
@@ -26,7 +24,7 @@ app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
     });
   }
 
-  return res.json({
+  res.json({
     name: req.file.originalname,
     type: req.file.mimetype,
     size: req.file.size
@@ -35,5 +33,5 @@ app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
 });
 
 const listener = app.listen(process.env.PORT || 3000, function() {
-  console.log('Your app is listening on port ' + listener.address().port);
+  console.log('Listening on port ' + listener.address().port);
 });
