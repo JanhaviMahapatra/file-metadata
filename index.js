@@ -14,9 +14,7 @@ app.get('/', function(req, res) {
 
 
 // multer setup
-const upload = multer({
-  dest: 'uploads/'
-});
+const upload = multer();
 
 
 // file upload route
@@ -24,6 +22,12 @@ app.post(
   '/api/fileanalyse',
   upload.single('upfile'),
   function(req, res) {
+
+    if (!req.file) {
+      return res.json({
+        error: 'No file uploaded'
+      });
+    }
 
     res.json({
       name: req.file.originalname,
