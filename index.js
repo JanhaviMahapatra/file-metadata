@@ -6,7 +6,11 @@ const app = express();
 
 app.use(cors());
 
-const upload = multer();
+const storage = multer.memoryStorage();
+
+const upload = multer({
+  storage: storage
+});
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -17,12 +21,12 @@ app.get('/', function(req, res) {
 app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
 
   if (!req.file) {
-    return res.json({
+    return res.status(400).json({
       error: 'No file uploaded'
     });
   }
 
-  res.json({
+  return res.json({
     name: req.file.originalname,
     type: req.file.mimetype,
     size: req.file.size
