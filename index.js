@@ -6,14 +6,14 @@ const app = express();
 
 app.use(cors());
 
-app.use('/public', express.static(process.cwd() + '/public'));
+app.use(express.static('public'));
 
 const upload = multer({
   storage: multer.memoryStorage()
 });
 
 app.get('/', function(req, res) {
-  res.sendFile(process.cwd() + '/views/index.html');
+  res.sendFile(__dirname + '/views/index.html');
 });
 
 app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
@@ -24,10 +24,10 @@ app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
     });
   }
 
-  return res.json({
+  res.json({
     name: req.file.originalname,
     type: req.file.mimetype,
-    size: Number(req.file.size)
+    size: req.file.size
   });
 
 });
