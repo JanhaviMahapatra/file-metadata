@@ -18,6 +18,8 @@ app.get('/', function(req, res) {
 
 app.post('/api/fileanalyse', upload.single('upfile'), function(req, res) {
 
+  console.log(req.file);
+
   if (!req.file) {
     return res.json({
       error: 'No file uploaded'
